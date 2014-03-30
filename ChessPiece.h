@@ -25,7 +25,7 @@ public:
 
     Color getColor();       // Zwroc kolor pionka
     void displayPosition(); // Wyswietl aktualna pozycje pionka
-
+    bool castling; // Roszada wykorzystywana jedynie przez wieze i krola
 protected:
 	Chessboard& chessboard;
 

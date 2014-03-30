@@ -27,9 +27,11 @@ bool Pawn::checkMove(Point goal){
     int dir = -1;
     if (this->color == black)
         dir = 1;
+
     // Jezeli nie wykonano ruchu to może ruszyc się o dwa pola
     if (this->numberOfMoves == 0)
-        dir *=2;
+        if (this->position.X() == goal.X() &&  this->position.Y()-goal.Y() == 2*dir)
+            return true;
 
     if (this->position.X() == goal.X() &&  this->position.Y()-goal.Y() == dir)
 		return true;

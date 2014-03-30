@@ -96,12 +96,36 @@ void Chessboard::displayPieces() {
 
 bool Chessboard::tryToMove(Point start, Point end) {
     if (!this->isFree(start)) {
+        bool moved = false;
+        // Sprawdz czy krol nie wykonuje ruchu po raz pierwsz,
+        // bo moze wieza zaczela wykonywac roszade
+        if (this->getPieceType(start) == "king")
+        {
+            // Sprawdz krotka roszade
+            if (!this->isFree(Point(5,start.Y())))
+                if (this->board[5][start.Y()]->castling)
+                    this->board[start.X()][start.Y()]->castling = true; // Oznacz ze moze wykonac roszade
 
+            // Sprawdz dluga roszade
+            if (!this->isFree(Point(3,start.Y())))
+                if (this->board[3][start.Y()]->castling)
+                    this->board[start.X()][start.Y()]->castling = true; // Oznacz ze moze wykonac roszade
+            std::cout << "biale "<< this->board[4][0]->castling <<" czarne " << this->board[4][7]->castling << "\n";
 
-        //QString m;
-        //m.append(QString("%1 %2 %3 %4").arg(x1).arg(y1).arg(x2).arg(y2));
+            // Wykonaj ruch roszady krolem
+            if (this->board[start.X()][start.Y()]->castling)
+                moved = this->board[start.X()][start.Y()]->moveTo(end);
+            if (moved)
+                return true;
+        }
+        // Jezeli nie rusza sei krol, to wyczysc mozliwosc roszady przeciwnikowi
+        else{
+            for (int i=0; i<8;i++)
+                for (int j=0;j<8;j++)
+                    if (!this->isFree(Point(i,j)) && (this->getColor(Point(i,j)) == black) == this->whiteMoves)
+                        this->board[i][j]->castling = false;
+        }
 
-		bool moved = false;
 		// Sprawdz czy dobra kolejnosc ruchow
         if (this->whiteMoves == (this->getColor(start) == white)) {
             moved = this->board[start.X()][start.Y()]->moveTo(end);

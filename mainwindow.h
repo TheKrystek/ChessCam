@@ -21,7 +21,7 @@ private slots:
     void on_pushButton_2_clicked();
 void displayInMessageBox(QString,int);
 void log(QString);
-
+void whoMoves(QString color);
 
 private:
     Ui::MainWindow *ui;

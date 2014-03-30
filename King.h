@@ -10,7 +10,7 @@ public:
 	King(Color, Point, Chessboard&);
 	~King();
 	bool checkMove(Point);
-	bool capture(Point);
+    bool capture(Point);
 };
 }
 

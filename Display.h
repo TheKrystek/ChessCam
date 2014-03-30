@@ -29,9 +29,11 @@ void setMessageHandler(void (*i)(QString));
 
 signals:
 void newMessage(QString,int);
-
+void whoMoves(QString);
 public slots:
-          void draw(int x);
+
+
+void draw(int x);
           void setStep(int s);
 
 
@@ -56,6 +58,7 @@ public slots:
     void setChartBackground(QBrush);
 
  void Move(Point, Point);
+  void Move(int, int, int, int);
 void setChessboard(Chessboard* chessboard);
 void loadChessPieces();
 

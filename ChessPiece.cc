@@ -10,6 +10,7 @@ ChessPiece::ChessPiece(Color color, Point pos, Chessboard& cb) :
     this->position = pos;
 	this->numberOfMoves = 0;
     this->isMoving = false;
+    this->castling = false;
 
 }
 

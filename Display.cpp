@@ -228,6 +228,11 @@ void Display::setChessboard(Chessboard *chessboard){
     this->chessboard = chessboard;
 }
 
+void Display::Move(int x1,int y1,int x2,int y2){
+    this->Move(Point(x1,y1),Point(x2,y2));
+}
+
+
 void Display::Move(Point A, Point B){
 
     try {
@@ -255,8 +260,8 @@ void Display::Move(Point A, Point B){
             pos_y = end.y();
             repaint();
 
-            if (this->chessboard->check())
-                throw "Szach";
+          //  if (this->chessboard->check())
+            //    throw "Szach";
             this->chessboard->toggleMoving(B);
         }
     }
@@ -265,7 +270,7 @@ void Display::Move(Point A, Point B){
        std::cout << S;
         emit newMessage(S,0);
     }
-
+    emit whoMoves((this->chessboard->whiteMoves ? "biale": "czarne"));
 }
 
 void Display::loadChessPieces(){

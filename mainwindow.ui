@@ -272,6 +272,19 @@ p, li { white-space: pre-wrap; }
              <string>Sekwencja</string>
             </property>
            </widget>
+           <widget class="QLabel" name="ruch">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>10</y>
+              <width>57</width>
+              <height>14</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>biale</string>
+            </property>
+           </widget>
           </widget>
          </widget>
         </item>
