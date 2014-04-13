@@ -5,20 +5,25 @@
 #include <iostream>
 #include <vector>
 #include "Point.h"
-
+#include <QObject>
 
 namespace ChessCam {
 
 class ChessPiece;
 
-class Chessboard {
-	friend class ChessPiece;
+class Chessboard  : public QObject{
+    Q_OBJECT
+    friend class ChessPiece;
+    friend class Pawn;
 
 private:
-    bool move(Point, Point);  // Przesun pionek
-    ChessPiece *** board;           // Macierz wskaznikow na pionki - 8x8
+    bool move(Point, Point);        // Przesun pionek
+    ChessPiece * board[8][8];       // Macierz wskaznikow na pionki - 8x8
     void setPieces();
 public:
+    Chessboard();
+    ~Chessboard();
+
     bool whiteMoves;
     std::vector<const char*> whiteCaptured;
     std::vector<const char*> blackCaptured;
@@ -32,13 +37,13 @@ public:
     bool isMoving(Point);
     Color getColor(Point);
     const char* getPieceType(Point);
-
-	void displayPieces();
-    void displayPiece(Point, bool);
     void toggleMoving(Point);
 
-    Chessboard();
-    ~Chessboard();
+
+signals:
+    void moved(Point,Point);
+    void captured(Point,Point);
+
 };
 
 }

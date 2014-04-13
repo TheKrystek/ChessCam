@@ -9,9 +9,12 @@
 #include "Point.h"
 
 
+
 namespace ChessCam {
 
-class ChessPiece {
+class ChessPiece
+{
+
 public:
     ChessPiece(Color, Point, Chessboard&);
 	virtual ~ChessPiece();
@@ -24,17 +27,18 @@ public:
     void toggleMoving();    // Przelacz on/off czy pionek sie rusza
 
     Color getColor();       // Zwroc kolor pionka
-    void displayPosition(); // Wyswietl aktualna pozycje pionka
-    bool castling; // Roszada wykorzystywana jedynie przez wieze i krola
+    bool castling;          // Roszada wykorzystywana jedynie przez wieze i krola
 protected:
 	Chessboard& chessboard;
 
     Point position;      // (X,Y) określaja polozenie pionka na szachownicy
-
     int numberOfMoves;  // Liczba wykonanych ruchów
     bool isMoving;      // Okresla, czy pionek aktualnie wykonuje ruch
-
     Color color;        // Kolor pionka
+
+
+
+
 };
 
 }

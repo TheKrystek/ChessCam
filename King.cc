@@ -18,11 +18,10 @@ bool King::capture(Point goal){
 }
 
 bool King::checkMove(Point goal){
-     if (this->castling){
+     if (this->castling && (this->numberOfMoves == 0)){
         // Jezeli krol sie jeszcze nie ruszyl i moze wykonac roszade
-        if (this->numberOfMoves == 0)
-            return true;
         this->castling = false;
+        return true;
     }
     if (abs(goal.X() - this->position.X()) == 1 || abs(goal.Y() - this->position.Y()) == 1)
 		return true;

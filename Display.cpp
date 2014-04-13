@@ -16,32 +16,13 @@ Display::Display(QWidget *parent)
 {
 
     QPoint p = changeCoordinates(Point());
-    pos_x = p.x();
+    pos_x = p.x(); // punkty jedynie do animacji
     pos_y = p.y();
-
-    squareSize = 20;
-    padding = 4;
-    shape = Path;
-    step=5;
-    mark = 2;
+    clear = true;
     antialiased = true;
-    factor = 1;
-    grid =1;
-    axis = true;
-    arrows = true;
-    fillChart = true;
-    v_sep = 50 ;     //pozioma strzalka
-    h_sep = 20;
-    srand(time(NULL));
     setBackgroundRole(QPalette::Base);
     setAutoFillBackground(true);
-
     this->loadChessPieces();
-
-    bgBrush = QBrush(QColor(255,255,255,150));
-    penAxis = QPen(Qt::black,2,Qt::SolidLine);
-    penChart = QPen(Qt::black,1,Qt::SolidLine);
-    penGrid = QPen(Qt::gray,1,Qt::DotLine);
 }
 
 
@@ -66,37 +47,9 @@ void Display::setSize(QSize size){
         this->squareSize = (this->size.height() - 20) / 12;
     else
         this->squareSize = (this->size.width() - 20) / 12;
-    setPadding(padding);
+    margin = (size.width() - 12*squareSize) / 2;
 }
 
-void Display::setPadding(int padding){
-    this->padding = padding;
-    padding_bottom = padding+4;
-    padding_left = padding+4;
-    padding_right = padding+12;
-    padding_top = padding+12;
-
-    area.setTopLeft(QPoint(padding_left,padding_top));
-    area.setBottomRight(QPoint(size.width()-padding_right,size.height() - padding_bottom));
-}
-
-void Display::setShape(Shape shape)
-{
-    this->shape = shape;
-    update();
-}
-
-void Display::setPen(const QPen &pen)
-{
-    this->pen = pen;
-    update();
-}
-
-void Display::setBrush(const QBrush &brush)
-{
-    this->brush = brush;
-    update();
-}
 
 void Display::setAntialiased(bool antialiased)
 {
@@ -104,18 +57,15 @@ void Display::setAntialiased(bool antialiased)
     update();
 }
 
-void Display::draw(int value){
 
-    kolejka.push_back(value);
-}
 
 
 void Display::paintEvent(QPaintEvent * /* event */)
 {
 
     QPainter painter(this);
-    painter.setPen(pen);
-    painter.setBrush(brush);
+    painter.setPen( QPen(Qt::black,1,Qt::SolidLine));
+    painter.setBrush( QBrush(QColor(255,255,255,150)));
 
     if (antialiased)
         painter.setRenderHint(QPainter::Antialiasing, true);
@@ -127,22 +77,22 @@ void Display::paintEvent(QPaintEvent * /* event */)
 
        // Narysuj cyferki
        for (int i = 0; i < 8 ; i++)
-        painter.drawText(2*squareSize - squareSize/2, 2*squareSize + i * squareSize + squareSize/2 + 5, QString::number(8-i - 1));
+        painter.drawText(margin + 2*squareSize - squareSize/2, 2*squareSize + i * squareSize + squareSize/2 + 5, QString::number(8-i - 1));
        for (int i = 0; i < 8 ; i++)
-        painter.drawText(2*squareSize + i * squareSize + squareSize/2 , 10*squareSize + squareSize/2 , QString::number(i  ));
+        painter.drawText(margin+ 2*squareSize + i * squareSize + squareSize/2 , 10*squareSize + squareSize/2 , QString::number(i  ));
 
 
        for (uint i =0; i < this->chessboard->whiteCaptured.size(); i++){
            QString piece = "white_";
-           painter.drawPixmap(QPoint(2*squareSize + (i%8)*squareSize,5+(i/8)*0.8*squareSize), pieces[piece+this->chessboard->whiteCaptured[i]].scaled(squareSize,squareSize));
+           painter.drawPixmap(QPoint(margin + 2*squareSize + (i%8)*squareSize,5+(i/8)*0.8*squareSize), pieces[piece+this->chessboard->whiteCaptured[i]].scaled(squareSize,squareSize));
        }
        for (uint i =0; i < this->chessboard->blackCaptured.size(); i++){
            QString piece = "black_";
-           painter.drawPixmap(QPoint(2*squareSize + (i%8)*squareSize,10*squareSize+20+(i/8)*0.8*squareSize), pieces[piece+this->chessboard->blackCaptured[i]].scaled(squareSize,squareSize));
+           painter.drawPixmap(QPoint(margin + 2*squareSize + (i%8)*squareSize,10*squareSize+20+(i/8)*0.8*squareSize), pieces[piece+this->chessboard->blackCaptured[i]].scaled(squareSize,squareSize));
        }
 
        // Przesun pedzel tak zeby zostawic margines
-       painter.translate(2*squareSize,2*squareSize);
+       painter.translate(margin+2*squareSize,2*squareSize);
 
 
        for (int i = 0; i < 8; i++)
@@ -172,50 +122,9 @@ void Display::paintEvent(QPaintEvent * /* event */)
 
 }
 
-void Display::setStep(int step){
-    this->step = step;
-}
-void Display::setPenAxis(QPen pen){
-    this->penAxis = pen;
-}
-void Display::setPenChart(QPen pen){
-    this->penChart = pen;
-}
-void Display::setPenGrid(QPen pen){
-    this->penGrid = pen;
-}
-void Display::setArrows(bool val){
-    this->arrows = val;
-}
-void Display::setGrid(bool val){
-    this->grid = val;
-}
-void Display::setAxis(bool val){
-    this->axis = val;
-}
-void Display::setBackground(QBrush brush){
-   this->brush = brush;
-}
-
-void Display::setChartBackground(QBrush brush){
-   this->bgBrush = brush;
-}
-void Display::setPaddingLeft(int i){
-    this->padding_left = i+4;
-}
-void Display::setPaddingRight(int i){
-    this->padding_right= i+12;
-}
-void Display::setPaddingTop(int i){
-    this->padding_top = i+12;
-}
-void Display::setPaddingBottom(int i){
-    this->padding_bottom = i+4;
-}
 
 QPoint Display::changeCoordinates(Point p)
 {
-
     int x = p.X();
     int y = p.Y();
     y = (7 - y) * squareSize;
@@ -253,21 +162,20 @@ void Display::Move(Point A, Point B){
                     break;
                 pos_x += step_x;
                 pos_y += step_y;
-                Sleeper::msleep(20);
+                Sleeper::msleep(speed);
                 repaint();
             }
             pos_x = end.x();
             pos_y = end.y();
             repaint();
-
-          //  if (this->chessboard->check())
-            //    throw "Szach";
+            this->clear = false;
+            if (this->chessboard->check())
+               throw "Szach";
             this->chessboard->toggleMoving(B);
         }
     }
     catch (const char * S)
     {
-       std::cout << S;
         emit newMessage(S,0);
     }
     emit whoMoves((this->chessboard->whiteMoves ? "biale": "czarne"));
@@ -282,4 +190,13 @@ void Display::loadChessPieces(){
 }
 
 
+void Display::resizeEvent(QResizeEvent *event)
+{
+    this->setSize(QSize(width(),height()));
+    update();
+}
 
+void Display::setSpeed(int s){
+    s = abs(s) % 11;
+    this->speed = (10 - s) * 10 + 1;
+}

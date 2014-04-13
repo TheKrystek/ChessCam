@@ -14,13 +14,7 @@ ChessPiece::ChessPiece(Color color, Point pos, Chessboard& cb) :
 
 }
 
-void ChessPiece::displayPosition() {
-	std::cout << " [";
-	std::cout << (color == white ? "w" : "b");
-	std::cout << "] (";
-    std::cout << this->position.X();
-    std::cout << "," << this->position.Y() << ")";
-}
+
 
 bool ChessPiece::moveTo(Point goal) {
 	// Sprawdz czy pole na ktore chcemy sie ruszyc jest wolne
@@ -32,7 +26,7 @@ bool ChessPiece::moveTo(Point goal) {
 			this->numberOfMoves++;
 			return true;
 		} else
-			throw "Niepoprawny ruch 1";
+            throw "Ten ruch nie jest poprawny";
 	} else {
 		// Jezeli pole jest zajete to sprawdz czy mozna je bic
 		// Czyli sprawdz czy pole jest zejete przez pionek innego koloru
@@ -44,7 +38,7 @@ bool ChessPiece::moveTo(Point goal) {
 			return true;
 		}
 		else
-			throw "Niepoprawny ruch 2";
+            throw "Ten ruch nie jest poprawny";
 	}
 	return false;
 }

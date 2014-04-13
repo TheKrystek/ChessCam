@@ -27,10 +27,19 @@ bool Queen::capture(Point goal) {
         (abs(goal.X() - this->position.X()) == abs(goal.Y() - this->position.Y()))){
         goal.setX(goal.X() - step_x);
         goal.setY(goal.Y() - step_y);
-        while(goal.X() != position.X() && goal.Y() != position.Y()){
+        while(goal.X() != position.X()){
             if (!this->chessboard.isFree(goal))
                 return false;
             goal.setX(goal.X() - step_x);
+        }
+        while(goal.X() != position.X() && step_y == 0){
+            if (!this->chessboard.isFree(goal))
+                return false;
+            goal.setX(goal.X() - step_x);
+        }
+        while(goal.Y() != position.Y() && step_x == 0){
+            if (!this->chessboard.isFree(goal))
+                return false;
             goal.setY(goal.Y() - step_y);
         }
         return true;
@@ -51,6 +60,17 @@ bool Queen::checkMove(Point goal) {
 
     if ((abs(goal.X() - this->position.X()) == 0 || abs(goal.Y() - this->position.Y()) == 0 ) ||
         (abs(goal.X() - this->position.X()) == abs(goal.Y() - this->position.Y()))){
+
+        while(goal.X() != position.X() && step_y == 0){
+            if (!this->chessboard.isFree(goal))
+                return false;
+            goal.setX(goal.X() - step_x);
+        }
+        while(goal.Y() != position.Y() && step_x == 0){
+            if (!this->chessboard.isFree(goal))
+                return false;
+            goal.setY(goal.Y() - step_y);
+        }
         while(goal.X() != position.X() && goal.Y() != position.Y()){
             if (!this->chessboard.isFree(goal))
                 return false;

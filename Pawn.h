@@ -6,11 +6,14 @@
 namespace ChessCam {
 class Pawn: public ChessPiece
 {
+
 public:
+
 	Pawn(Color, Point, Chessboard&);
 	~Pawn();
 	bool checkMove(Point);
 	bool capture(Point);
+    long int enpassant; // czy może wykonać bicie en passant (w przelocie),
 };
 
 }

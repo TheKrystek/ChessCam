@@ -14,11 +14,6 @@ using namespace ChessCam;
 
 Chessboard::Chessboard() {
 
-
-	this->board = new ChessPiece**[8];
-	for (int i = 0; i < 8; i++)
-		this->board[i] = new ChessPiece*[8];
-
 	for (int i = 0; i < 8; i++)
 		for (int j = 0; j < 8; j++)
             this->board[i][j] = NULL;
@@ -60,39 +55,6 @@ void Chessboard::setPieces() {
 	}
 }
 
-void Chessboard::displayPiece(Point goal, bool pos = false) {
-    if (dynamic_cast<Bishop*>(board [goal.X()] [goal.Y()]))
-		cout << "Goniec";
-
-    if (dynamic_cast<King*>(board [goal.X()] [goal.Y()]))
-		cout << "Krol";
-
-    if (dynamic_cast<Knight*>(board [goal.X()] [goal.Y()]))
-		cout << "Skoczek";
-
-    if (dynamic_cast<Pawn*>(board [goal.X()] [goal.Y()]))
-		cout << "Pionek";
-
-    if (dynamic_cast<Queen*>(board [goal.X()] [goal.Y()]))
-		cout << "Hetman";
-
-    if (dynamic_cast<Rook*>(board [goal.X()] [goal.Y()]))
-		cout << "Wieza";
-
-    if (pos && this->board [goal.X()] [goal.Y()])
-        this->board [goal.X()] [goal.Y()]->displayPosition();
-}
-
-void Chessboard::displayPieces() {
-	for (int j = 0; j < 8; j++)
-		for (int i = 0; i < 8; i++) {
-            this->displayPiece(Point(i, j));
-			if (board[i][j]) {
-				board[i][j]->displayPosition();
-				cout << endl;
-			}
-		}
-}
 
 bool Chessboard::tryToMove(Point start, Point end) {
     if (!this->isFree(start)) {
@@ -110,7 +72,6 @@ bool Chessboard::tryToMove(Point start, Point end) {
             if (!this->isFree(Point(3,start.Y())))
                 if (this->board[3][start.Y()]->castling)
                     this->board[start.X()][start.Y()]->castling = true; // Oznacz ze moze wykonac roszade
-            std::cout << "biale "<< this->board[4][0]->castling <<" czarne " << this->board[4][7]->castling << "\n";
 
             // Wykonaj ruch roszady krolem
             if (this->board[start.X()][start.Y()]->castling)
@@ -118,7 +79,7 @@ bool Chessboard::tryToMove(Point start, Point end) {
             if (moved)
                 return true;
         }
-        // Jezeli nie rusza sei krol, to wyczysc mozliwosc roszady przeciwnikowi
+        // Jezeli nie rusza sie krol, to wyczysc mozliwosc roszady przeciwnikowi
         else{
             for (int i=0; i<8;i++)
                 for (int j=0;j<8;j++)
@@ -132,10 +93,13 @@ bool Chessboard::tryToMove(Point start, Point end) {
 			if (moved)
 				this->whiteMoves = !this->whiteMoves;
 		} else
-			throw "Teraz kolej przeciwnika";
+            if (!this->whiteMoves)
+                throw "Teraz ruch czarnych";
+            else
+                throw "Teraz ruch białych";
 		return moved;
 	}
-	throw "Nie mozna wykonac ruchu bo nie ma pionka";
+    throw "Brak pionka";
     return false;
 }
 
@@ -144,6 +108,7 @@ bool Chessboard::move(Point start, Point end) {
     if (this->isFree(end)) {
         this->board[end.X()][end.Y()] = this->board[start.X()][start.Y()];
         this->board[start.X()][start.Y()] = NULL;
+        emit moved(start,end);
 	}
 	return false;
 }
@@ -151,9 +116,6 @@ bool Chessboard::move(Point start, Point end) {
 // figura o wsp x1; y1 zajmij miejsce fig x2; y2
 bool Chessboard::capture(Point start, Point end) {
     if (!this->isFree(end)) {
-        this->displayPiece(start, true);
-		cout << " bije ";
-        this->displayPiece(end, true);
 
         if (this->getColor(end) == white)
             this->whiteCaptured.push_back(getPieceType(end));
@@ -163,15 +125,13 @@ bool Chessboard::capture(Point start, Point end) {
         delete this->board[end.X()][end.Y()];
         this->board[end.X()][end.Y()] = this->board[start.X()][start.Y()];
         this->board[start.X()][start.Y()] = NULL;
+        emit captured(start,end);
 	}
 	return false;
 }
 
 void Chessboard::deletePiece(Point goal) {
     if (!this->isFree(goal)) {
-		cout << "Usuwam ";
-        this->displayPiece(goal, true);
-		cout << endl;
         delete this->board[goal.X()][goal.Y()];
         this->board[goal.X()][goal.Y()] = NULL;
 	}
@@ -241,4 +201,15 @@ bool Chessboard::check(){
     return false;
 }
 
+Chessboard::~Chessboard(){
 
+    // Usun wszystkie pionki
+    for (int i = 0; i < 8; i++)
+        for (int j = 0; j < 8; j++)
+            if (!this->isFree(Point(i,j)))
+                delete this->board[i][j];
+
+    // Opróżnij wektory ze zbitymi pionkami
+    blackCaptured.clear();
+    whiteCaptured.clear();
+}

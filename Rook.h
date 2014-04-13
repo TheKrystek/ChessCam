@@ -2,7 +2,6 @@
 #define ROOK_H
 #include "ChessPiece.h"
 
-
 namespace ChessCam {
 class Rook: public ChessPiece
 {

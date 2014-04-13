@@ -2,6 +2,7 @@
 #define QUEEN_H
 #include "ChessPiece.h"
 
+
 namespace ChessCam {
 class Queen: public ChessPiece
 {
