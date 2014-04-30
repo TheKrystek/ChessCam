@@ -184,8 +184,8 @@ void Display::Move(Point A, Point B){
 void Display::loadChessPieces(){
     QString list[6] = {"pawn","rook","knight","bishop","queen","king"};
     for (int i = 0; i < 6; i++){
-        pieces["white_"+list[i]].load(":/pieces/white_"+list[i]+".png");
-        pieces["black_"+list[i]].load(":/pieces/black_"+list[i]+".png");
+        pieces["white_"+list[i]].load(":/pieces/img/white_"+list[i]+".png");
+        pieces["black_"+list[i]].load(":/pieces/img/black_"+list[i]+".png");
     }
 }
 

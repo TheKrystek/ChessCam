@@ -3,6 +3,8 @@
 #include "Chessboard.h"
 #include <QMainWindow>
 #include "Point.h"
+#include "camera/ChessboardObserver.h"
+
 
 using namespace ChessCam;
 namespace Ui {
@@ -20,6 +22,13 @@ public:
 private:
     QString replay;
     QList<Point> replayList;
+    QTimer *timer;
+cv::VideoCapture cap;
+ChessboardObserver observer;
+
+DetectionState state;
+bool interrupted;
+
 
 private slots:
     void on_pushButton_clicked();
@@ -27,6 +36,7 @@ private slots:
 void displayInMessageBox(QString,int);
 void log(Point,Point);
 void whoMoves(QString color);
+
 
 void on_actionRestart_triggered();
 
@@ -65,6 +75,31 @@ void on_actionDomy_lna_triggered();
 void on_actionZapisz_powt_rk_gry_triggered();
 
 void on_actionWczytaj_powt_rk_triggered();
+
+
+void update();
+
+void on_h_ups_valueChanged(int value);
+
+void on_h_lows_valueChanged(int value);
+
+void on_s_lows_valueChanged(int value);
+
+void on_s_ups_valueChanged(int value);
+
+void on_v_lows_valueChanged(int value);
+
+void on_v_ups_valueChanged(int value);
+
+void on_gc_valueChanged(int value);
+
+void on_fc_valueChanged(int value);
+
+void on_wft_valueChanged(int value);
+
+void on_dr_stateChanged(int arg1);
+
+void on_ac_stateChanged(int arg1);
 
 private:
     Ui::MainWindow *ui;

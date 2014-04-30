@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,7 +24,14 @@ SOURCES += main.cpp\
     Bishop.cc \
     Rook.cc  \
     King.cc \
-    Point.cpp
+    Point.cpp \
+    camera/StateDetector.cpp \
+    camera/MoveRecognizer.cpp \
+    camera/ChessboardState.cpp \
+    camera/ChessboardDetector.cpp \
+    camera/FiguresFinder.cpp \
+    camera/ChessboardOvserver.cpp \
+    camera/WidgetOpenCV.cpp
 
 HEADERS  += mainwindow.h \
     Display.h \
@@ -37,7 +44,25 @@ HEADERS  += mainwindow.h \
     Bishop.h \
     Rook.h  \
     King.h \
-    Point.h
+    Point.h \
+    camera/MoveRecognizer.h \
+    camera/StateDetector.h \
+    camera/ChessboardState.h \
+    camera/ChessboardDetection.h \
+    camera/FiguresFinder.h \
+    camera/ChessboardDetector.h \
+    camera/ChessboardObserver.h \
+    camera/WidgetOpenCV.h
+
+INCLUDEPATH += /usr/include/openc2
+PKGCONFIG += opencv phonon
+LIBS += -LC:/usr/local/lib/ \
+-lopencv_core \
+-lopencv_highgui \
+-lopencv_imgproc \
+-lopencv_features2d \
+-lopencv_calib3d \
+-lopencv_video
 
 FORMS    += mainwindow.ui
 
