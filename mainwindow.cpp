@@ -44,8 +44,9 @@ MainWindow::MainWindow(QWidget *parent) :
     cap.open(0);
     if(!cap.isOpened());
     observer.start(cap);
-
     timer->start(100);
+
+
     this->showMaximized();
     // Ustaw wartosci poczatkowe sliderow i checkboxow
     ui->h_lows->setValue(markerLower[0]);
@@ -85,20 +86,25 @@ void MainWindow::on_pushButton_2_clicked()
 }
 
 void MainWindow::displayInMessageBox(QString msg,int p){
+
+    // Informacja o szachu zwracana jest jako wyjątek, ale nie powoduje cofnięcia niepoprawnego ruchu.
     if (msg == "Szach")
         p = 2;
+    else
+        observer.undoneMove();
+
     QString styleO, styleC;
     styleO = "<center><b>";
     styleC = "</b></center>";
 
     switch(p){
-    case 0:
+    case 0: // na czerwono
         ui->messageBox->setStyleSheet("background:#F26C4F;border:none;");
         break;
-    case 1:
+    case 1: // na niebiesko
         ui->messageBox->setStyleSheet("background:#438CCA;border:none;");
         break;
-    case 2:
+    case 2: // na zielono
         ui->messageBox->setStyleSheet("background:#ACD372;border:none;");
         break;
 
@@ -318,21 +324,23 @@ void MainWindow::on_actionWczytaj_powt_rk_triggered()
 }
 
 void MainWindow::update(){
+    try{
+        if(!interrupted) {
+            try {
+                // sprawdzenie stani szachownicy
+                state = observer.checkState();
 
-    if(!interrupted) {
-        try {
-            // sprawdzenie stani szachownicy
-            state = observer.checkState();
+                // FIXTHIS
+                if (false)
+                    switch (state) {
+                    case MOVE:
+                    {
+                        puts("[wykonano ruch figury]");
 
-            switch (state) {
-            case MOVE:
-            {
-                puts("[wykonano ruch figury]");
+                        std::vector<cv::Point2i> coords;
+                        observer.getLastMove(coords);
 
-                std::vector<cv::Point2i> coords;
-                observer.getLastMove(coords);
-
-                /*
+                        /*
                      Tutaj mo¿na wywo³ac odpowiedni¹ metodê modu³u logicznego
 
                      observer.getLastMove(moveCoords) zwraca przez argument
@@ -347,23 +355,25 @@ void MainWindow::update(){
 
                     */
 
-                if (coords.size() == 2)
-                    ui->display->Move(Point(coords[0].x,coords[0].y),Point(coords[1].x,coords[1].y));
-                if (coords.size() == 4)
-                {
-                    ui->display->Move(Point(coords[2].x,coords[2].y),Point(coords[3].x,coords[3].y));
-                    ui->display->Move(Point(coords[0].x,coords[0].y),Point(coords[1].x,coords[1].y));
-                }
+                        // Zwykły ruch
+                        if (coords.size() == 2)
+                            ui->display->Move(Point(coords[0].x,coords[0].y),Point(coords[1].x,coords[1].y));
+                        // Roszada
+                        if (coords.size() == 4)
+                        {
+                            ui->display->Move(Point(coords[2].x,coords[2].y),Point(coords[3].x,coords[3].y));
+                            ui->display->Move(Point(coords[0].x,coords[0].y),Point(coords[1].x,coords[1].y));
+                        }
 
 
-            }
-                break;
+                    }
+                        break;
 
-            case INCORRECT:
-            {
-                puts("[niepoprawny ruch]");
-                displayInMessageBox("[niepoprawny ruch]",2);
-                /*
+                    case INCORRECT:
+                    {
+                        puts("Błąd wykrywania figur");
+                        displayInMessageBox("[niepoprawny ruch]",0);
+                        /*
                      Wykonany ruch jest nieprawid³owy (np. zniknê³o za du¿o figur
                      z szachownicy). Ten stan  te¿ siê zdarza przy problemach
                      z wykrywaniem w barzdo zmiennych warunkach œwiat³a.
@@ -378,44 +388,45 @@ void MainWindow::update(){
                      przywróci figury do poprawnego, poprzedniego stanu u³o¿enia).
 
                     */
-            }
-                break;
+                    }
+                        break;
 
-            case IMPOSSIBLE:
-            {
-                puts("[nie mozna wykryc stanu szachownicy]");
-                displayInMessageBox("Nie mozna wykrsc szachownicy",3);
-                /*
+                    case IMPOSSIBLE:
+                    {
+                        puts("[nie mozna wykryc stanu szachownicy]");
+                        displayInMessageBox("Nie mozna wykrsc szachownicy",0);
+                        /*
                      To siê zdarza gdy nie mo¿na znaleŸæ szachownicy na obrazie.
                      Wykrywanie szachownicy jest aktualnie aktywne
                      tylko w trybie kalibracji. Mo¿na poinformowaæ gracza
                      aby dostosowa³ suwaki.
 
                     */
-            }
-                break;
+                    }
+                        break;
 
-            default:
-            {
-                /*
+                    default:
+                    {
+                        /*
                      Ostatnia mo¿liwoœæ to stan UNCHANGED. Nic siê nie zmieni³o
                      na szachownicy wiêc nie ma nic do roboty.
 
                     */
+                    }
+                    }
             }
+
+            // mo¿e siê zdarzyæ, ¿e opencv, przy baardzo z³ym oœwietleniu i problemach
+            // z wykryciem szachownicy, rzuca wyj¹tek
+            catch (cv::Exception ex) {
+                ex.formatMessage();
+                puts(ex.what());
+
             }
-        }
-
-        // mo¿e siê zdarzyæ, ¿e opencv, przy baardzo z³ym oœwietleniu i problemach
-        // z wykryciem szachownicy, rzuca wyj¹tek
-        catch (cv::Exception ex) {
-            ex.formatMessage();
-            puts(ex.what());
 
         }
-
-    }
-    ui->opencv->showImage(*(observer.getFrame()));
+        ui->opencv->showImage(*(observer.getFrame()));
+    }catch(...){}
 }
 
 
@@ -472,12 +483,14 @@ void MainWindow::on_fc_valueChanged(int value)
 {
     figuresContrast = value;
     ui->fcl->setText("Kontrast figur " + QString::number(value));
+    onContrastChange(value,NULL);
 }
 
 void MainWindow::on_wft_valueChanged(int value)
 {
     whiteFigureThreshold = value;
     ui->wftl->setText("Próg białych " + QString::number(value));
+    onWhiteThreshChange(value,NULL);
 }
 
 void MainWindow::on_dr_stateChanged(int arg1)

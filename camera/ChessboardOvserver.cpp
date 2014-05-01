@@ -193,3 +193,7 @@ cv::Mat* ChessboardObserver::getFrame(){
         return &frame;
     return NULL;
 }
+
+void ChessboardObserver::getLastMove(std::vector<cv::Point2i>& moveCoords){
+   figuresFinder.getLastMove(moveCoords);
+}
