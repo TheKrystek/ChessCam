@@ -168,10 +168,10 @@ void ChessboardObserver::estimateContrast(void* statePtr, Mat& grayImage) {
 
 		if (contrastDelta) {
 			figuresContrast += contrastDelta;
-			setTrackbarPos("contrast", TRACKBARS_WND_NAME, figuresContrast);
+            //setTrackbarPos("contrast", TRACKBARS_WND_NAME, figuresContrast);
 		
 			/*printf("Avg empty intensity: white: %d (count: %d) black: %d (%d); new contrast: %d\n",
-				avgWhite, count[1], avgBlack, count[0], figuresContrast);*/
+                avgWhite, coufiguresContrastnt[1], avgBlack, count[0], figuresContrast);*/
 		}
 	}
 }

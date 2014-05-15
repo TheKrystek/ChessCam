@@ -68,7 +68,7 @@ DetectionState FiguresFinder::perform(Mat* frame) {
 
 	if (isPlayerMove) {
 		if (!isHand) {
-//			puts("End of move");
+            puts("End of move");
 			// rozpocznij wykrywanie figur na kilku kolejnych ramkach
 			stateDetector->detect(lastFrame);
 			puts(" stateDetector starts");
@@ -79,7 +79,7 @@ DetectionState FiguresFinder::perform(Mat* frame) {
 
 	else {
 		if (isHand) {
-//			puts("Begin of move");
+            puts("Begin of move");
 			if (stateDetector->isDetecting()) {
 				stateDetector->stop();
 				// pomijamy nie w pe³ni wykryty stan - byæ mo¿e to b³¹d wykrywania rêki
@@ -91,7 +91,7 @@ DetectionState FiguresFinder::perform(Mat* frame) {
 		else {
 			if (stateDetector->isDetecting()) {
 				if (stateDetector->detect(lastFrame)) {
-//					puts(" stateDetector ends");
+                    puts(" stateDetector ends");
 
 					// jeœli poprzedni stan by³ z³y, nie wykrywaj nowego -
 					// - uznaj, ¿e ten ruch by³ popraw¹ pionków
@@ -223,7 +223,7 @@ bool FiguresFinder::detectFigureMove() {
 	}
 
 	result = moveRecognizer.recognize(changes, isWhiteFiguresMove, moveCoords);
-    if (result == INCORRECT) {
+    if (result == MoveRecognizer::INCORRECT) {
 		// niepoprawny stan planszy lub nierozpoznany ruch
 		isStateOK = false;
 		isMoveRecognized = false;

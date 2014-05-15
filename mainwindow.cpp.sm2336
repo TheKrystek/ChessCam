@@ -326,7 +326,7 @@ void MainWindow::on_actionWczytaj_powt_rk_triggered()
 void MainWindow::update(){
     try{
 
-        if(!interrupted) {
+        if(true) {
             try {
                 ui->fc->setValue(figuresContrast);
                 // sprawdzenie stani szachownicy

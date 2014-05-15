@@ -1,5 +1,5 @@
 #include "ChessboardDetector.h"
-
+#include <cstdio>
 using namespace cv;
 
 //typedef Scalar_<int> Scalar3i;
@@ -507,7 +507,7 @@ int ChessboardDetector::getFieldIntensity(Mat& grayImage, int x, int y) {
 		image_roi = grayImage(roi);
 	}
 	catch (...) {
-        //puts("StateDetector::determineColors() - problem with roi");
+        puts("StateDetector::determineColors() - problem with roi");
 		return -1;
 	}
 

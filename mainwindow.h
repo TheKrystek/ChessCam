@@ -101,6 +101,8 @@ void on_dr_stateChanged(int arg1);
 
 void on_ac_stateChanged(int arg1);
 
+void on_dr_2_stateChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     ChessCam::Chessboard* chessboard;
